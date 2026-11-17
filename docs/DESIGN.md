@@ -121,3 +121,86 @@ Decisions and their limits:
 - **Distances are plain `double` kilometres** with a `Km` suffix on method
   names, not a wrapper type. Kilometres are the only unit in the system, so a
   type would add ceremony without preventing a real mistake.
+
+## 3. Supply-chain graph
+
+Package `chain` in `sparkpoint-core` models the chain as a directed graph
+without cycles. "Upstream" means towards the origin of the goods, "downstream"
+towards the customer.
+
+```mermaid
+classDiagram
+    class SupplyChain {
+        +of(nodes, routes)$ SupplyChain
+        +nodes() List~Node~
+        +routes() List~Route~
+        +node(NodeId) Optional~Node~
+        +upstreamOf(NodeId) List~NodeId~
+        +downstreamOf(NodeId) List~NodeId~
+        +allDownstreamOf(NodeId) List~NodeId~
+        +upstreamFirst() List~Node~
+    }
+    class Node {
+        <<record>>
+        NodeId id
+        String name
+        NodeType type
+        GeoPoint location
+    }
+    class Route {
+        <<record>>
+        NodeId from
+        NodeId to
+    }
+    class NodeId {
+        <<record>>
+        String value
+    }
+    class NodeType {
+        <<enumeration>>
+        SUPPLIER
+        FARM
+        PROCESSOR
+        WAREHOUSE
+        PORT
+        CUSTOMER
+        OTHER
+    }
+    class InvalidSupplyChainException {
+        +problems() List~String~
+    }
+    SupplyChain "1" o-- "1..*" Node
+    SupplyChain "1" o-- "*" Route
+    Node --> NodeId
+    Node --> NodeType
+    Node --> GeoPoint
+    Route --> NodeId : from, to
+    SupplyChain ..> InvalidSupplyChainException : throws
+```
+
+`SupplyChain.of` is the only way to create a chain, and it validates
+everything, so any `SupplyChain` that exists is usable. It rejects:
+
+| Problem | Example message |
+|---|---|
+| No nodes | `a supply chain needs at least one node` |
+| Repeated node id | `node id 'farm' is used more than once` |
+| Route to or from a missing node | `route farm -> ghost ends at unknown node 'ghost'` |
+| Repeated route | `route farm -> shop is listed more than once` |
+| Cycle | `routes form a cycle, so nothing in it comes first: a -> b -> c -> a` |
+
+Decisions:
+
+- **All problems are reported together.** A user fixing a hand-written file
+  should not have to run it once per mistake.
+- **Cycles are rejected.** A disruption propagates downstream; in a cycle every
+  node is downstream of itself and there is no first node to evaluate.
+- **`upstreamFirst()` is a topological order** (Kahn's algorithm), computed
+  once at construction. The propagation step in Milestone 2 walks it so that a
+  node's upstream statuses are known before its own. Ties are broken by the
+  order nodes appear in the file, so the result is deterministic.
+- **`NodeType` is descriptive only.** No rule behaves differently by type.
+- **A `Route` carries only its two ends for now.** Transit time and priority
+  are added when the delay estimate in Milestone 2 needs them.
+- **The chain is immutable.** It is shared between the polling threads and the
+  RPC threads later, and an immutable object needs no locking.
