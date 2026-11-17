@@ -2,8 +2,7 @@
 
 A practical guide for Sam: how sessions hand off, how to review what Claude
 writes, and how to keep usage down. Written for this project, but the ideas
-carry over; a generic copy of the setup is in
-[claude-starter-kit/](../claude-starter-kit/README.md).
+carry over to others.
 
 ## 1. The one idea behind everything
 
