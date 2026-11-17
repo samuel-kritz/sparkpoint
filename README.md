@@ -10,8 +10,9 @@ and forecasts from [EPA AirNow](https://www.airnow.gov), evaluates each location
 against configurable rules, and propagates the effects downstream. Every status
 comes with the reasons behind it. SparkPoint does not predict fire spread.
 
-**Status: early development.** The build and the first domain type exist;
-nothing is runnable yet.
+**Status: early development.** The domain model and the supply-chain file
+format exist; nothing is runnable yet. See
+[samples/almond-chain.xml](samples/almond-chain.xml) for an example chain.
 
 - [Project plan](docs/PLAN.md): stack, milestones, how the work is organised
 - [Design](docs/DESIGN.md): architecture and diagrams, updated as the code grows

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sample supply chain: almonds from the northern Sacramento Valley.
+
+  Pollination hives are trucked in from Washington, two orchards feed a huller, and the processor
+  ships to export and to a restaurant customer. The orchards sit beside the area burned by the
+  2024 Park Fire, which is the event SparkPoint's replay data will cover.
+
+  The places are real towns, but the businesses are invented and the coordinates are town centres.
+
+  The xsi attribute below is only a hint that lets an editor such as IntelliJ IDEA check the file
+  as you type. SparkPoint always validates against its own built-in copy of the schema.
+-->
+<supplyChain xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:noNamespaceSchemaLocation="../sparkpoint-core/src/main/resources/io/github/samuelkritz/sparkpoint/chain/supply-chain.xsd">
+    <nodes>
+        <node id="bees" name="Puget Sound Apiaries" type="supplier" latitude="47.6062" longitude="-122.3321"/>
+        <node id="orchard-chico" name="Chico Almond Orchard" type="farm" latitude="39.7285" longitude="-121.8375"/>
+        <node id="orchard-vina" name="Vina Almond Orchard" type="farm" latitude="39.9332" longitude="-122.0530"/>
+        <node id="huller" name="Orland Huller and Sheller" type="processor" latitude="39.7474" longitude="-122.1964"/>
+        <node id="processor" name="Sacramento Almond Processor" type="processor" latitude="38.5816" longitude="-121.4944"/>
+        <node id="cold-store" name="Stockton Cold Storage" type="warehouse" latitude="37.9577" longitude="-121.2908"/>
+        <node id="port" name="Port of Oakland" type="port" latitude="37.7955" longitude="-122.2792"/>
+        <node id="restaurant" name="San Francisco Restaurant" type="customer" latitude="37.7749" longitude="-122.4194"/>
+    </nodes>
+    <routes>
+        <route from="bees" to="orchard-chico"/>
+        <route from="bees" to="orchard-vina"/>
+        <route from="orchard-chico" to="huller"/>
+        <route from="orchard-vina" to="huller"/>
+        <route from="huller" to="processor"/>
+        <route from="processor" to="cold-store"/>
+        <route from="cold-store" to="port"/>
+        <route from="processor" to="restaurant"/>
+    </routes>
+</supplyChain>

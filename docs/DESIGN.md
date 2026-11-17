@@ -174,3 +174,64 @@ Decisions:
   are added when the delay estimate in Milestone 2 needs them.
 - **The chain is immutable.** It is shared between the polling threads and the
   RPC threads later, and an immutable object needs no locking.
+
+## 4. Supply-chain file format
+
+A chain is described in XML. The format is defined by `supply-chain.xsd`, which
+ships inside `sparkpoint-core`, and read by `SupplyChainXmlReader`. A complete
+example is [samples/almond-chain.xml](../samples/almond-chain.xml).
+
+```xml
+<supplyChain>
+    <nodes>
+        <node id="orchard" name="Chico Almond Orchard" type="farm" latitude="39.7285" longitude="-121.8375"/>
+        <node id="huller" name="Orland Huller" type="processor" latitude="39.7474" longitude="-122.1964"/>
+    </nodes>
+    <routes>
+        <route from="orchard" to="huller"/>
+    </routes>
+</supplyChain>
+```
+
+| Attribute | Allowed values |
+|---|---|
+| `node/@id` | Letters, digits, `.`, `_`, `-` |
+| `node/@name` | Any text that is not blank |
+| `node/@type` | `supplier`, `farm`, `processor`, `warehouse`, `port`, `customer`, `other` |
+| `node/@latitude` | Decimal degrees, -90 to 90, north positive |
+| `node/@longitude` | Decimal degrees, -180 to 180, east positive |
+| `route/@from`, `route/@to` | The id of a node; goods flow from `from` to `to` |
+
+The `routes` section is optional.
+
+### Two-stage checking
+
+```mermaid
+flowchart LR
+    File[/chain.xml/] --> Parse[Parse + schema check]
+    Parse -->|shape is wrong| E1[InvalidSupplyChainException<br/>problems with line numbers]
+    Parse -->|shape is right| Build[SupplyChain.of]
+    Build -->|chain makes no sense| E2[InvalidSupplyChainException<br/>problems in plain words]
+    Build -->|ok| Chain([SupplyChain])
+```
+
+- **The schema checks shape**: elements, attributes, value ranges. These
+  problems come with line numbers.
+- **`SupplyChain.of` checks meaning**: unique ids, routes that refer to real
+  nodes, no cycles. XSD could express the first two, but its messages for them
+  are far harder to read than the ones `SupplyChain` writes.
+- A file with shape problems is not checked for meaning, because a chain cannot
+  be built from it.
+
+Decisions:
+
+- **The reader takes an `InputStream`, not a file path.** Opening files is left
+  to the caller, which keeps `sparkpoint-core` free of file handling and makes
+  the reader trivially testable from strings.
+- **DOCTYPE declarations are refused.** A chain file may come from someone
+  else, and this closes off XML external-entity and entity-expansion attacks.
+- **No XML namespace.** The file is written by hand; a namespace would add a
+  line of boilerplate that is easy to get wrong.
+- **Known roughness:** schema messages come from the JDK's XML parser. They are
+  accurate but wordy, and one mistake usually produces two lines (the reason,
+  then the attribute it applies to).

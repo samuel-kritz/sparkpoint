@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The SparkPoint supply-chain file format.
+
+  This schema checks the shape of the file: which elements and attributes exist and what values
+  they may hold. Rules that span the whole file (ids are unique, routes refer to real nodes, no
+  cycles) are checked afterwards by SupplyChain, which gives clearer messages than XSD can.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="supplyChain">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nodes">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="node" type="Node" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <!-- Optional: a chain may be a set of unconnected places. -->
+                <xs:element name="routes" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="route" type="Route" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Node">
+        <xs:attribute name="id" type="NodeId" use="required"/>
+        <xs:attribute name="name" type="NonBlank" use="required"/>
+        <xs:attribute name="type" type="NodeType" use="required"/>
+        <xs:attribute name="latitude" type="Latitude" use="required"/>
+        <xs:attribute name="longitude" type="Longitude" use="required"/>
+    </xs:complexType>
+
+    <!-- Goods flow from "from" to "to": the "to" node depends on the "from" node. -->
+    <xs:complexType name="Route">
+        <xs:attribute name="from" type="NodeId" use="required"/>
+        <xs:attribute name="to" type="NodeId" use="required"/>
+    </xs:complexType>
+
+    <!-- Letters, digits, dot, underscore and hyphen: short and safe to show anywhere. -->
+    <xs:simpleType name="NodeId">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Za-z0-9._\-]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- At least one character that is not whitespace. -->
+    <xs:simpleType name="NonBlank">
+        <xs:restriction base="xs:string">
+            <xs:pattern value=".*\S.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NodeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="supplier"/>
+            <xs:enumeration value="farm"/>
+            <xs:enumeration value="processor"/>
+            <xs:enumeration value="warehouse"/>
+            <xs:enumeration value="port"/>
+            <xs:enumeration value="customer"/>
+            <xs:enumeration value="other"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Decimal degrees, north positive. -->
+    <xs:simpleType name="Latitude">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="-90"/>
+            <xs:maxInclusive value="90"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Decimal degrees, east positive. -->
+    <xs:simpleType name="Longitude">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="-180"/>
+            <xs:maxInclusive value="180"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
