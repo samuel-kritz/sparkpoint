@@ -16,6 +16,7 @@ nothing is runnable yet.
 - [Project plan](docs/PLAN.md): stack, milestones, how the work is organised
 - [Design](docs/DESIGN.md): architecture and diagrams, updated as the code grows
 - [Original proposal](docs/PROPOSAL.md)
+- [Working with Claude Code](docs/WORKING-WITH-CLAUDE.md): how this project is built with an AI assistant, and how its work is reviewed
 
 ## Building
 

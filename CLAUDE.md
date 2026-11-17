@@ -6,6 +6,13 @@ user-defined supply chain. Roadmap: [docs/PLAN.md](docs/PLAN.md). Design:
 
 Sam reviews every change, so the work must be easy to review.
 
+## Current state
+
+@docs/HANDOFF.md
+
+Before ending a session, or when Sam says he is stopping, run `/handoff` so
+that file is accurate for the next session.
+
 ## Commands
 
 - Build and run all tests and coverage checks: `./mvnw verify`
@@ -17,7 +24,8 @@ Always use the wrapper (`./mvnw`); Maven is not installed globally.
 ## Workflow
 
 - One pull request per slice of a milestone, small enough to review in one
-  sitting. Never commit directly to `main`.
+  sitting. Never commit directly to `main`. The steps are in the `/slice`
+  skill.
 - Write the test first. Tests and the code they drive go in the same commit.
 - A pull request description says what changed, why, the design choices made
   and alternatives rejected, and how it is tested.
