@@ -90,7 +90,37 @@ same command on every pull request.
 `GeoPoint` (in `sparkpoint-core`, package `geo`) is a latitude/longitude pair in
 decimal degrees on WGS 84, the datum both data sources use. It validates its
 range on construction, so no other code needs to check coordinates again.
-Distance calculations are added in Milestone 1.
+
+`GreatCircle` holds the two distance calculations the rules need. Both return
+kilometres and treat the Earth as a sphere of mean radius 6371.0088 km.
+
+| Method | Answers | Used by |
+|---|---|---|
+| `distanceKm(from, to)` | How far apart are two places? | Fire-proximity rule, trend indicator |
+| `distanceToSegmentKm(point, start, end)` | How close does a fire come to any part of a route? | Route fire-proximity rule |
+
+```mermaid
+flowchart LR
+    A((start)) --- B((end))
+    P1[fire beside the route] -. perpendicular distance .-> M[nearest place on the route]
+    P2[fire beyond the end] -. distance to the end .-> B
+    P3[fire behind the start] -. distance to the start .-> A
+```
+
+Decisions and their limits:
+
+- **Sphere, not ellipsoid.** The error is at most about 0.5%, far smaller than
+  the uncertainty in a satellite fire detection (hundreds of metres) relative
+  to thresholds measured in whole kilometres.
+- **A route is the straight great-circle line between two nodes**, not the road
+  a truck drives. A fire near a winding road but far from the straight line is
+  not caught. Routes with intermediate waypoints would fix this and can be
+  added to the chain format later without changing this calculation.
+- **Routes are assumed shorter than a quarter of the Earth's circumference**
+  (about 10,000 km), which the point-to-route formula relies on.
+- **Distances are plain `double` kilometres** with a `Km` suffix on method
+  names, not a wrapper type. Kilometres are the only unit in the system, so a
+  type would add ceremony without preventing a real mistake.
 
 ## 3. Supply-chain graph
 
