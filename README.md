@@ -10,10 +10,26 @@ and forecasts from [EPA AirNow](https://www.airnow.gov), evaluates each location
 against configurable rules, and propagates the effects downstream. Every status
 comes with the reasons behind it. SparkPoint does not predict fire spread.
 
-**Status: early development.** Nothing is runnable yet.
+**Status: early development.** The build and the first domain type exist;
+nothing is runnable yet.
 
-- [Project plan](docs/PLAN.md): stack, architecture, milestones
+- [Project plan](docs/PLAN.md): stack, milestones, how the work is organised
+- [Design](docs/DESIGN.md): architecture and diagrams, updated as the code grows
 - [Original proposal](docs/PROPOSAL.md)
+
+## Building
+
+You need a JDK, version 21 or newer. Maven is downloaded by the wrapper.
+
+```bash
+./mvnw verify
+```
+
+This compiles everything, runs the tests, and writes a coverage report to
+`sparkpoint-core/target/site/jacoco/index.html`.
+
+In IntelliJ IDEA, open the project folder and it will import the Maven modules
+from `pom.xml`.
 
 ## Licence
 
