@@ -11,8 +11,7 @@ Last updated: 2026-11-17
 - **Milestone 0** (skeleton, CI): merged (#1).
 - **Milestone 1** (core model): merged (#2, #3, #4). `main` passes
   `./mvnw clean verify` on JDK 21 (88 tests).
-- Session workflow (this file, `/handoff`, `/slice`, session-start hook):
-  merged (#7).
+- Session workflow (this file, skills, session-start hook): merged (#7).
 - **Milestone 2** (rules and propagation): not started.
 - No open pull requests. No uncommitted work.
 
@@ -35,10 +34,6 @@ Start **Milestone 2** with `/slice`, one pull request each, branched from
 4. Downstream propagation with delay estimate and chain-impact summary.
    This is where `Route` gains transit time.
 
-Each merge makes other open branches out of date with `main`, which
-protection requires: `git checkout <branch> && git merge origin/main`,
-verify, push.
-
 ## Decisions
 
 - Status model: Sam approved the draft in `docs/PLAN.md` section 3 as
@@ -51,8 +46,9 @@ verify, push.
 
 - CI builds on JDK 21 but the machine's default `java` is 26. Before pushing:
   `JAVA_HOME=$(/usr/libexec/java_home -v 21) ./mvnw clean verify`.
-- `main` is protected: pull request, green "Build and test", branch up to date.
-  The repository does not allow auto-merge.
+- `main` is protected: pull request, green "Build and test", branch up to date
+  (after a merge: `git merge origin/main` into each open branch, verify,
+  push). The repository does not allow auto-merge.
 - Stacked pull requests conflict after the lower one is squash-merged. Prefer
   branching each slice from `main`.
 - This checkout commits with Sam's GitHub no-reply email (local git config).
