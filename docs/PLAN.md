@@ -30,7 +30,7 @@ effects, enterprise multi-tenant features, and a mapping library.
 | Database | **SQLite through plain JDBC** (xerial `sqlite-jdbc`) | One local file, no server, in-memory mode for tests. Plain JDBC keeps the SQL visible. |
 | HTTP | `java.net.http.HttpClient` (JDK) | No extra dependency. |
 | JSON / CSV / XML | Jackson for AirNow JSON; a small hand-written parser for FIRMS CSV; JDK JAXP with an XSD for the supply-chain file | FIRMS returns CSV, not JSON. An XSD gives users precise errors for a malformed chain file. |
-| Tests | JUnit 5, AssertJ, hand-written fakes, gRPC in-process transport, JaCoCo coverage | Fakes over mocks follows the PayStation style and keeps tests readable. |
+| Tests | JUnit Jupiter (JUnit 6, the current release of the JUnit 5 API), AssertJ, hand-written fakes, gRPC in-process transport, JaCoCo coverage | Fakes over mocks follows the PayStation style and keeps tests readable. |
 | CI | GitHub Actions running `./mvnw verify` on every pull request | Reviews start from a green build. |
 | Diagrams | Mermaid, embedded in Markdown | Renders on GitHub and in IntelliJ, and diffs as text in pull requests. |
 | IDE | **IntelliJ IDEA** (already installed; Community edition is sufficient) | It is the right IDE for Java and Maven, and it is JetBrains. |
@@ -164,7 +164,7 @@ diagrams are written.
 
 | # | Milestone | Delivers | Design-doc additions |
 |---|---|---|---|
-| 0 | **Skeleton** | GitHub repo, Maven modules, wrapper, CI, README, licence, `.gitignore`, `CLAUDE.md` with project conventions | Architecture overview |
+| 0 | **Skeleton** | GitHub repo, Maven parent and `sparkpoint-core` (other modules are added when they first have content), wrapper, CI, README, licence, `.gitignore`, `CLAUDE.md` with project conventions, and `GeoPoint` as the first tested type to prove the pipeline | Architecture overview |
 | 1 | **Core model** | Nodes, routes, graph with cycle and reference validation, haversine and point-to-route distance, XML schema and loader, sample Northern California almond chain | Domain class diagram |
 | 2 | **Rules and propagation** | The four rules, `rules.xml`, propagation with delay estimate and chain-impact summary, reasons | Rule and propagation diagrams; final status model |
 | 3 | **Data adapters and replay** | FIRMS and AirNow adapters, replay adapters, a recorder tool, a recorded real event, and a command-line runner (`evaluate chain.xml --replay ...`) | Adapter class diagram; data formats |
