@@ -1,0 +1,22 @@
+# Build output
+target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Local runtime data and secrets: never commit API keys
+*.db
+*.sqlite
+.env
+sparkpoint-local.properties
+
+# Claude Code local settings
+.claude/settings.local.json
